@@ -191,10 +191,10 @@ class GameAlarmApp:
             values=minutes,
             width=80,
             height=45,
-            # 투명 스타일 (핵심!)
-            fg_color="transparent",           # 배경 투명
+            # 투명 스타일 (핵심!) - 배경색과 동일하게 설정
+            fg_color=self.ds.BG_PRIMARY,      # 배경과 동일한 색 (시각적으로 투명)
             border_width=0,                   # 테두리 제거
-            button_color="transparent",       # 드롭다운 버튼 배경 투명
+            button_color=self.ds.BG_PRIMARY,  # 드롭다운 버튼 배경도 동일
             button_hover_color=self.ds.BUTTON_SECONDARY,
             dropdown_fg_color=self.ds.BG_PRIMARY,
             dropdown_hover_color=self.ds.BUTTON_SECONDARY,
