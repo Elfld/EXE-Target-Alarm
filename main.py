@@ -35,16 +35,18 @@ class DesignSystem:
     """UI 일관성을 위한 디자인 변수 중앙 관리"""
 
     # 색상 팔레트
-    BG_PRIMARY = "#FAFAFA"          # 메인 배경 (Warm White)
+    BG_PRIMARY = "#F5EBE0"          # 메인 배경 (Beige/Cream)
+    BG_WHITE = "#FFFFFF"            # 카드/박스 배경
     TEXT_PRIMARY = "#2C2C2C"        # 주요 텍스트 (Dark Grey)
     TEXT_SECONDARY = "#999999"      # 보조 텍스트 (Light Grey)
     TEXT_ACCENT = "#333333"         # 강조 텍스트 (Very Dark Grey)
 
-    BUTTON_PRIMARY = "#333333"      # 메인 버튼
-    BUTTON_HOVER = "#1A1A1A"        # 버튼 호버
+    BUTTON_PRIMARY = "#4A4A4A"      # 메인 버튼
+    BUTTON_HOVER = "#2A2A2A"        # 버튼 호버
     BUTTON_SECONDARY = "#E8E8E8"    # 보조 버튼
 
     ACCENT_BLUE = "#4A90E2"         # 액센트 컬러
+    BORDER_LIGHT = "#DDDDDD"        # 얇은 테두리
 
     # 상태 색상
     STATUS_WAITING = "#999999"      # 대기 중
@@ -121,40 +123,60 @@ class GameAlarmApp:
         ctk.CTkLabel(
             self.root,
             text="",
-            height=self.ds.PADDING_LARGE,
+            height=20,
             fg_color="transparent"
         ).pack()
 
         # ========================================
-        # 타이틀
+        # Hero 아이콘 (벨 + 시계)
         # ========================================
-        title = ctk.CTkLabel(
+        icon_label = ctk.CTkLabel(
             self.root,
-            text="Game Alarm",
-            font=self.ds.FONT_TITLE,
+            text="🔔",
+            font=("Segoe UI", 60),
             text_color=self.ds.TEXT_PRIMARY,
             fg_color="transparent"
         )
-        title.pack(pady=(0, self.ds.PADDING_LARGE))
+        icon_label.pack(pady=(10, 25))
 
         # ========================================
-        # 타겟 프로세스 (Label + Change Button)
+        # 타겟 프로세스 (흰색 박스 카드)
         # ========================================
-        target_container = ctk.CTkFrame(self.root, fg_color="transparent")
-        target_container.pack(pady=self.ds.PADDING_SMALL)
+        # 흰색 박스 카드
+        target_card = ctk.CTkFrame(
+            self.root,
+            fg_color=self.ds.BG_WHITE,
+            corner_radius=12,
+            border_width=1,
+            border_color=self.ds.BORDER_LIGHT
+        )
+        target_card.pack(pady=self.ds.PADDING_SMALL, padx=40)
 
+        # 카드 내부 컨테이너
+        target_inner = ctk.CTkFrame(target_card, fg_color="transparent")
+        target_inner.pack(padx=15, pady=12, fill="x")
+
+        # 폴더 아이콘
+        ctk.CTkLabel(
+            target_inner,
+            text="📁",
+            font=("Segoe UI", 18),
+            fg_color="transparent"
+        ).pack(side="left", padx=(0, 8))
+
+        # 프로세스 이름
         self.target_label = ctk.CTkLabel(
-            target_container,
+            target_inner,
             text="No game selected",
-            font=self.ds.FONT_LABEL,
+            font=("Segoe UI", 13, "bold"),
             text_color=self.ds.TEXT_SECONDARY,
             fg_color="transparent"
         )
         self.target_label.pack(side="left", padx=5)
 
-        # Change 버튼 (투명한 텍스트 버튼)
+        # Change 버튼
         change_button = ctk.CTkButton(
-            target_container,
+            target_inner,
             text="[Change]",
             command=self.browse_file,
             width=70,
@@ -165,7 +187,7 @@ class GameAlarmApp:
             font=self.ds.FONT_SMALL,
             border_width=0
         )
-        change_button.pack(side="left", padx=5)
+        change_button.pack(side="right", padx=5)
 
         # ========================================
         # 문장형 시간 선택: "Every Hour at [ 02 ] min"
@@ -180,30 +202,33 @@ class GameAlarmApp:
             font=self.ds.FONT_SENTENCE,
             text_color=self.ds.TEXT_PRIMARY,
             fg_color="transparent"
-        ).pack(side="left", padx=(0, 8))
+        ).pack(side="left", padx=(0, 10))
 
-        # [ 02 ] - ComboBox (투명 스타일, 큰 폰트)
+        # [ 02 ] - ComboBox (iOS 피커 스타일)
         # 00~59까지의 분 리스트 생성
         minutes = [f"{i:02d}" for i in range(60)]
 
         self.minute_combo = ctk.CTkComboBox(
             sentence_container,
             values=minutes,
-            width=80,
-            height=45,
-            # 투명 스타일 (핵심!) - 배경색과 동일하게 설정
-            fg_color=self.ds.BG_PRIMARY,      # 배경과 동일한 색 (시각적으로 투명)
-            border_width=0,                   # 테두리 제거
-            button_color=self.ds.BG_PRIMARY,  # 드롭다운 버튼 배경도 동일
-            button_hover_color=self.ds.BUTTON_SECONDARY,
-            dropdown_fg_color=self.ds.BG_PRIMARY,
+            width=65,
+            height=40,
+            # 평소에는 텍스트처럼 (배경색과 동일)
+            fg_color=self.ds.BG_PRIMARY,      # 배경과 동일
+            border_width=0,                   # 테두리 없음
+            button_color=self.ds.BG_PRIMARY,  # 드롭다운 버튼도 숨김
+            button_hover_color=self.ds.BG_PRIMARY,
+            # 드롭다운 메뉴 (스크롤 가능하게)
+            dropdown_fg_color=self.ds.BG_WHITE,
             dropdown_hover_color=self.ds.BUTTON_SECONDARY,
-            # 폰트 크게 (강조)
-            font=self.ds.FONT_TIME,
+            # 폰트 강조 (Bold)
+            font=("Segoe UI", 28, "bold"),    # 큰 볼드 폰트
             text_color=self.ds.TEXT_ACCENT,
-            dropdown_font=self.ds.FONT_LABEL,
+            dropdown_font=("Segoe UI", 14),
             # 상태
-            state="readonly"
+            state="readonly",
+            # 드롭다운 높이 증가 (더 많은 항목 표시)
+            dropdown_height=250
         )
         self.minute_combo.set("02")  # 기본값
         self.minute_combo.pack(side="left", padx=5)
@@ -215,25 +240,38 @@ class GameAlarmApp:
             font=self.ds.FONT_SENTENCE,
             text_color=self.ds.TEXT_PRIMARY,
             fg_color="transparent"
-        ).pack(side="left", padx=(8, 0))
+        ).pack(side="left", padx=(10, 0))
 
         # ========================================
-        # 사운드 토글 (작은 체크박스 스타일)
+        # 사운드 토글 (iOS 스타일 Switch)
         # ========================================
         sound_container = ctk.CTkFrame(self.root, fg_color="transparent")
         sound_container.pack(pady=self.ds.PADDING_MEDIUM)
 
-        self.sound_checkbox = ctk.CTkCheckBox(
+        # 라벨
+        ctk.CTkLabel(
             sound_container,
-            text="Enable Sound Alert",
+            text="Sound Effect",
             font=self.ds.FONT_SMALL,
             text_color=self.ds.TEXT_SECONDARY,
-            fg_color=self.ds.ACCENT_BLUE,
-            hover_color=self.ds.BUTTON_HOVER,
-            border_width=1
+            fg_color="transparent"
+        ).pack(side="left", padx=(0, 10))
+
+        # iOS 스타일 Switch
+        self.sound_switch = ctk.CTkSwitch(
+            sound_container,
+            text="",
+            width=45,
+            height=24,
+            switch_width=45,
+            switch_height=24,
+            fg_color=self.ds.TEXT_SECONDARY,       # OFF 색상
+            progress_color=self.ds.ACCENT_BLUE,    # ON 색상
+            button_color=self.ds.BG_WHITE,
+            button_hover_color=self.ds.BG_WHITE
         )
-        self.sound_checkbox.select()  # 기본값: ON
-        self.sound_checkbox.pack()
+        self.sound_switch.select()  # 기본값: ON
+        self.sound_switch.pack(side="left")
 
         # ========================================
         # 메인 버튼 (Start / Stop)
@@ -243,15 +281,15 @@ class GameAlarmApp:
 
         self.main_button = ctk.CTkButton(
             button_container,
-            text="Start Monitoring",
+            text="START MONITORING",
             command=self.toggle_monitoring,
-            width=280,
+            width=320,
             height=self.ds.BUTTON_HEIGHT,
             corner_radius=self.ds.BUTTON_RADIUS,
             fg_color=self.ds.BUTTON_PRIMARY,
             hover_color=self.ds.BUTTON_HOVER,
             text_color="#FFFFFF",
-            font=self.ds.FONT_LABEL
+            font=("Segoe UI", 13, "bold")
         )
         self.main_button.pack()
 
@@ -313,7 +351,7 @@ class GameAlarmApp:
             return
 
         # 사운드 설정
-        self.sound_enabled = self.sound_checkbox.get()
+        self.sound_enabled = self.sound_switch.get()
 
         # 설정 저장
         self.save_config()
@@ -324,7 +362,7 @@ class GameAlarmApp:
 
         # UI 업데이트
         self.main_button.configure(
-            text="Stop Monitoring",
+            text="STOP MONITORING",
             fg_color=self.ds.STATUS_ERROR,
             hover_color="#C0392B"
         )
@@ -343,7 +381,7 @@ class GameAlarmApp:
 
         # UI 업데이트
         self.main_button.configure(
-            text="Start Monitoring",
+            text="START MONITORING",
             fg_color=self.ds.BUTTON_PRIMARY,
             hover_color=self.ds.BUTTON_HOVER
         )
@@ -479,9 +517,9 @@ class GameAlarmApp:
 
             # 사운드 설정
             if self.sound_enabled:
-                self.sound_checkbox.select()
+                self.sound_switch.select()
             else:
-                self.sound_checkbox.deselect()
+                self.sound_switch.deselect()
 
         except Exception:
             pass
