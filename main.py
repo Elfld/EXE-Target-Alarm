@@ -218,7 +218,7 @@ class GameAlarmApp:
             border_width=0,                   # 테두리 없음
             button_color=self.ds.BG_PRIMARY,  # 드롭다운 버튼도 숨김
             button_hover_color=self.ds.BG_PRIMARY,
-            # 드롭다운 메뉴 (스크롤 가능하게)
+            # 드롭다운 메뉴
             dropdown_fg_color=self.ds.BG_WHITE,
             dropdown_hover_color=self.ds.BUTTON_SECONDARY,
             # 폰트 강조 (Bold)
@@ -226,9 +226,7 @@ class GameAlarmApp:
             text_color=self.ds.TEXT_ACCENT,
             dropdown_font=("Segoe UI", 14),
             # 상태
-            state="readonly",
-            # 드롭다운 높이 증가 (더 많은 항목 표시)
-            dropdown_height=250
+            state="readonly"
         )
         self.minute_combo.set("02")  # 기본값
         self.minute_combo.pack(side="left", padx=5)
