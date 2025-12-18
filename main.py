@@ -65,7 +65,7 @@ class DesignSystem:
 
     # 레이아웃
     WINDOW_WIDTH = 400
-    WINDOW_HEIGHT = 380
+    WINDOW_HEIGHT = 520  # 버튼과 상태바가 보이도록 증가
     PADDING_LARGE = 30
     PADDING_MEDIUM = 20
     PADDING_SMALL = 10
@@ -132,12 +132,12 @@ class GameAlarmApp:
         # ========================================
         icon_label = ctk.CTkLabel(
             self.root,
-            text="🔔",
-            font=("Segoe UI", 60),
+            text="🔔⏰",  # 벨+시계 조합
+            font=("Segoe UI", 50),
             text_color=self.ds.TEXT_PRIMARY,
             fg_color="transparent"
         )
-        icon_label.pack(pady=(10, 25))
+        icon_label.pack(pady=(10, 20))
 
         # ========================================
         # 타겟 프로세스 (흰색 박스 카드)
@@ -204,32 +204,31 @@ class GameAlarmApp:
             fg_color="transparent"
         ).pack(side="left", padx=(0, 10))
 
-        # [ 02 ] - ComboBox (iOS 피커 스타일)
+        # [ 02 ] - OptionMenu (드롭다운 화살표 없는 스타일)
         # 00~59까지의 분 리스트 생성
         minutes = [f"{i:02d}" for i in range(60)]
 
-        self.minute_combo = ctk.CTkComboBox(
+        self.minute_var = ctk.StringVar(value="02")
+        self.minute_menu = ctk.CTkOptionMenu(
             sentence_container,
+            variable=self.minute_var,
             values=minutes,
-            width=65,
+            width=70,
             height=40,
-            # 평소에는 텍스트처럼 (배경색과 동일)
-            fg_color=self.ds.BG_PRIMARY,      # 배경과 동일
-            border_width=0,                   # 테두리 없음
-            button_color=self.ds.BG_PRIMARY,  # 드롭다운 버튼도 숨김
+            # 텍스트처럼 보이게 (배경색과 동일)
+            fg_color=self.ds.BG_PRIMARY,
+            button_color=self.ds.BG_PRIMARY,
             button_hover_color=self.ds.BG_PRIMARY,
             # 드롭다운 메뉴
             dropdown_fg_color=self.ds.BG_WHITE,
             dropdown_hover_color=self.ds.BUTTON_SECONDARY,
             # 폰트 강조 (Bold)
-            font=("Segoe UI", 28, "bold"),    # 큰 볼드 폰트
+            font=("Segoe UI", 28, "bold"),
             text_color=self.ds.TEXT_ACCENT,
             dropdown_font=("Segoe UI", 14),
-            # 상태
-            state="readonly"
+            anchor="center"
         )
-        self.minute_combo.set("02")  # 기본값
-        self.minute_combo.pack(side="left", padx=5)
+        self.minute_menu.pack(side="left", padx=5)
 
         # "min" 텍스트
         ctk.CTkLabel(
@@ -340,7 +339,7 @@ class GameAlarmApp:
 
         # 입력값 검증: 알림 분
         try:
-            self.alert_minute = int(self.minute_combo.get())
+            self.alert_minute = int(self.minute_var.get())
         except ValueError:
             self.status_bar.configure(
                 text="⚠️ Invalid minute",
@@ -511,7 +510,7 @@ class GameAlarmApp:
                 )
 
             # 분 설정
-            self.minute_combo.set(f"{self.alert_minute:02d}")
+            self.minute_var.set(f"{self.alert_minute:02d}")
 
             # 사운드 설정
             if self.sound_enabled:
